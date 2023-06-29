@@ -8,6 +8,8 @@ use serde::Deserialize;
 
 use std::fs::{File, self};
 
+use crate::retrieve_subscriptions;
+
 #[derive(FromForm)]
 pub struct Upload<'r> {
     save: bool,
@@ -16,15 +18,15 @@ pub struct Upload<'r> {
 
 #[derive(Debug, Deserialize, Clone)]
 struct FccByteRecord<'a> {
-    location_id: String,
+    location_id: &'a [u8],
     address_primary: Option<&'a [u8]>,
-    city: String,
-    state: String,
-    zip: String,
-    zip_suffix: Option<String>,
+    city: &'a [u8],
+    state: &'a [u8],
+    zip: u32,
+    zip_suffix: Option<u32>,
     unit_count: u64,
-    bsl_flag: String,
-    building_type_code: String,
+    bsl_flag: &'a [u8],
+    building_type_code: char,
     land_use_code: u64,
     address_confidence_code: u64,
     county_geoid: u64,
@@ -40,11 +42,11 @@ struct FccRecord {
     address_primary: Option<String>,
     city: String,
     state: String,
-    zip: String,
-    zip_suffix: Option<String>,
+    zip: u32,
+    zip_suffix: Option<u32>,
     unit_count: u64,
-    bsl_flag: String,
-    building_type_code: String,
+    bsl_flag: bool,
+    building_type_code: char,
     land_use_code: u64,
     address_confidence_code: u64,
     county_geoid: u64,
@@ -57,14 +59,14 @@ struct FccRecord {
 impl<'a> From<FccByteRecord<'a>> for FccRecord {
     fn from(byte_record: FccByteRecord) -> Self {
         FccRecord {
-            location_id: byte_record.clone().location_id,
+            location_id: utf8(byte_record.clone().location_id),
             address_primary: byte_record.clone().address_primary.map(utf8),
-            city: byte_record.city,
-            state: byte_record.state,
+            city: utf8(byte_record.city),
+            state: utf8(byte_record.state),
             zip: byte_record.zip,
             zip_suffix: byte_record.zip_suffix,
             unit_count: byte_record.unit_count,
-            bsl_flag: byte_record.bsl_flag,
+            bsl_flag: utf8(byte_record.bsl_flag) == "TRUE",
             building_type_code: byte_record.building_type_code,
             land_use_code: byte_record.land_use_code,
             address_confidence_code: byte_record.address_confidence_code,
@@ -87,10 +89,16 @@ fn process_fcc_data(filename: String) -> Vec<FccRecord> {
 
     rdr.byte_records().filter_map(|byte_record| {
         if let Ok(byte_record) = byte_record {
-            if let Ok(fcc_record) = byte_record.deserialize::<FccByteRecord>(None) {
-                Some(fcc_record.into())
-            } else {
-                None
+            match byte_record.deserialize::<FccByteRecord>(None) {
+                Ok(fcc_record) => {
+                    let fcc: FccRecord = fcc_record.into();
+                    log::debug!("{fcc:#?}");
+                    Some(fcc)
+                }
+                Err(e) => {
+                    log::error!("{e}");
+                    None
+                }
             }
         } else {
             None
@@ -108,8 +116,9 @@ pub async fn upload_focus_data(
     let filename = format!("output/tmp/{uuid}");
 
     if media.file.persist_to(filename.clone()).await.is_ok() {
-        process_fcc_data(filename.clone());
+        let fcc = process_fcc_data(filename.clone());
         fs::remove_file(filename).ok();
+        let emerald = retrieve_subscriptions();
     }
     
     Ok(Status::Accepted)   
