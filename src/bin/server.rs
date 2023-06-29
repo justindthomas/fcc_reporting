@@ -1,11 +1,16 @@
 #[macro_use]
 extern crate rocket;
 
+use std::path::{Path, PathBuf};
+
 use fcc_reporting::routes::focus::upload_focus_data;
+use rocket::fs::{NamedFile, relative};
 
 #[get("/")]
-fn index() -> &'static str {
-    "Hello, world!"
+async fn index() -> Option<NamedFile> {
+    let path = Path::new(relative!("static")).join("index.html");
+    
+    NamedFile::open(path).await.ok()
 }
 
 #[launch]

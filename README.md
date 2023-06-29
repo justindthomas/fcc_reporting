@@ -4,7 +4,7 @@ This service gathers the information necessary to support the periodic reporting
 
 When the FCC data is submitted to the application, the Emerald customer data is retrieved and analyzed to build a set of relevant records. Those records are then used to create the CSV reports suitable to be uploaded to the FCC website.
 
-## Usage
+## Running the Server
 
 This is a Rust application and can be built and run from any system with a working Rust toolchain.
 
@@ -23,12 +23,18 @@ Note that the `API_KEY` above is truncated. Also note the trailling ':' characte
 
 The `API_URL` should be as specified above.
 
-Ultimately, this will be a basic web application with a minimal interface. The intention is that it be just a web page with a single upload element for the Fabric data with a display showing the completed reports.
+## Standard Usage
 
-Currently, the functionality is accessible via API and can be accessed using curl in this way.
+At its most basic, this is a web page with a single upload element for the Fabric data with a display showing the completed reports. Once running, you can browse to http://localhost:8000 and you should be presented with a form to select and submit the FCC Fabric CSV file.
+
+The form is currently completely unstyled. It's the minimum necessary to make the function work. I'll add some basic aesthetics to it when I have the core functionality working.
+
+## API Usage
+
+The functionality is accessible via API and can be accessed using curl in this way.
 
 ```
 curl -F 'file=@./FCCFabric-FocusAreas.csv' http://localhost:8000/focus
 ```
 
-Submitting the Fabric data as a multipart form to the `/focus` endpoint will kick off all of the analysis and report generation.
+Submitting the Fabric data as a multipart form to the `/focus` endpoint will kick off all of the analysis and report generation. This is exactly what submitting the file through the HTML form does as well.

@@ -2,8 +2,8 @@ use std::thread;
 
 use rocket::form::Form;
 use rocket::fs::TempFile;
-use rocket::http::Status;
 use rocket::post;
+use rocket::response::Redirect;
 
 use crate::analysis::link;
 use crate::fcc::process_fcc_data;
@@ -18,7 +18,7 @@ pub struct Upload<'r> {
 #[post("/focus", data = "<media>")]
 pub async fn upload_focus_data(
     mut media: Form<Upload<'_>>,
-) -> Result<Status, Status> {
+) -> Redirect {
 
     let uuid = uuid::Uuid::new_v4().to_string();
 
@@ -35,5 +35,5 @@ pub async fn upload_focus_data(
         });
     }
     
-    Ok(Status::Accepted)
+    Redirect::to("/")
 }
