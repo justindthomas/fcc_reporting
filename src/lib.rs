@@ -1,9 +1,14 @@
+#[macro_use]
+extern crate rocket;
+
 extern crate log;
 
 use dotenvy::dotenv;
 use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
 use std::env;
+
+pub mod routes;
 
 lazy_static! {
     pub static ref API_KEY: String = {
