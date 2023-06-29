@@ -1,4 +1,4 @@
-use fcc_reporting::retrieve_subscriptions;
+use fcc_reporting::emerald::retrieve_subscriptions;
 
 fn main() {
     let subscriptions = retrieve_subscriptions();
