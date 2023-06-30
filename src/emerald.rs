@@ -3,6 +3,7 @@ use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, thread};
 
+#[derive(PartialEq, Eq, Hash, Clone, Debug)]
 pub enum ProductType {
     Internet((u8, u16, u16)),
     Voip,
@@ -11,35 +12,44 @@ pub enum ProductType {
 }
 
 lazy_static! {
-    pub static ref PRODUCT_CODES: HashMap<&'static str, ProductType> = HashMap::from([
-        ("fttp1000", ProductType::Internet((50, 1000, 1000))),
-        ("fttp800", ProductType::Internet((50, 800, 800))),
-        ("fttp400", ProductType::Internet((50, 400, 400))),
-        ("fttp250", ProductType::Internet((50, 250, 250))),
-        ("fttp100", ProductType::Internet((50, 100, 100))),
-        ("fttp25", ProductType::Internet((50, 25, 25))),
-        ("fw25", ProductType::Internet((70, 25, 25))),
-        ("fw50", ProductType::Internet((70, 50, 50))),
-        ("fw75", ProductType::Internet((70, 75, 75))),
-        ("fw100", ProductType::Internet((70, 100, 100))),
-        ("ens1g", ProductType::Internet((50, 1000, 1000))),
-        ("enscustom", ProductType::Internet((50, 1000, 1000))),
-        ("ens100mbps", ProductType::Internet((50, 100, 100))),
-        ("gf100", ProductType::Internet((10, 100, 100))),
-        ("voipfax", ProductType::Voip),
-        ("voippbxr", ProductType::Voip),
-        ("voiprpxr", ProductType::Voip),
-        ("voipbus", ProductType::Voip),
-        ("fax2email", ProductType::Fax),
-        ("installation-quote", ProductType::Admin),
-        ("paymentagreement", ProductType::Admin),
-        ("pre-reg", ProductType::Admin),
-        ("service-call-quote", ProductType::Admin),
-        ("acp", ProductType::Admin),
-        ("ipv427", ProductType::Admin),
-        ("ipv428", ProductType::Admin),
-        ("ipv429", ProductType::Admin),
-        ("ipstatic", ProductType::Admin),
+    pub static ref PRODUCT_CODES: HashMap<String, ProductType> = HashMap::from([
+        (
+            "fttp1000".to_string(),
+            ProductType::Internet((50, 1000, 1000))
+        ),
+        ("fttp800".to_string(), ProductType::Internet((50, 800, 800))),
+        ("fttp400".to_string(), ProductType::Internet((50, 400, 400))),
+        ("fttp250".to_string(), ProductType::Internet((50, 250, 250))),
+        ("fttp100".to_string(), ProductType::Internet((50, 100, 100))),
+        ("fttp25".to_string(), ProductType::Internet((50, 25, 25))),
+        ("fw25".to_string(), ProductType::Internet((70, 25, 25))),
+        ("fw50".to_string(), ProductType::Internet((70, 50, 50))),
+        ("fw75".to_string(), ProductType::Internet((70, 75, 75))),
+        ("fw100".to_string(), ProductType::Internet((70, 100, 100))),
+        ("ens1g".to_string(), ProductType::Internet((50, 1000, 1000))),
+        (
+            "enscustom".to_string(),
+            ProductType::Internet((50, 1000, 1000))
+        ),
+        (
+            "ens100mbps".to_string(),
+            ProductType::Internet((50, 100, 100))
+        ),
+        ("gf100".to_string(), ProductType::Internet((10, 100, 100))),
+        ("voipfax".to_string(), ProductType::Voip),
+        ("voippbxr".to_string(), ProductType::Voip),
+        ("voiprpxr".to_string(), ProductType::Voip),
+        ("voipbus".to_string(), ProductType::Voip),
+        ("fax2email".to_string(), ProductType::Fax),
+        ("installation-quote".to_string(), ProductType::Admin),
+        ("paymentagreement".to_string(), ProductType::Admin),
+        ("pre-reg".to_string(), ProductType::Admin),
+        ("service-call-quote".to_string(), ProductType::Admin),
+        ("acp".to_string(), ProductType::Admin),
+        ("ipv427".to_string(), ProductType::Admin),
+        ("ipv428".to_string(), ProductType::Admin),
+        ("ipv429".to_string(), ProductType::Admin),
+        ("ipstatic".to_string(), ProductType::Admin),
     ]);
 }
 
@@ -144,7 +154,7 @@ pub struct Customer {
     primary_payment_source_id: Option<String>,
     payment_method: Option<PaymentMethod>,
     tax_providers_fields: Option<Vec<String>>,
-    cf_residentialbusiness: Option<String>,
+    pub cf_residentialbusiness: Option<String>,
     pub cf_service_address: Option<String>,
     pub cf_service_city_st_zip: Option<String>,
     pub cf_census_block_no: Option<String>,
@@ -178,7 +188,7 @@ pub struct Card {
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Subscription {
     id: Option<String>,
-    plan_id: Option<String>,
+    pub plan_id: Option<String>,
     plan_quantity: Option<u8>,
     plan_unit_price: Option<u32>,
     billing_period: Option<u8>,
@@ -213,7 +223,7 @@ pub struct Subscription {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct SubscriptionApiItem {
-    subscription: Subscription,
+    pub subscription: Subscription,
     pub customer: Customer,
     card: Option<Card>,
 }

@@ -1,4 +1,9 @@
-use crate::{emerald::SubscriptionApiItem, fcc::FccRecord};
+use std::collections::HashMap;
+
+use crate::{
+    emerald::{ProductType, SubscriptionApiItem, PRODUCT_CODES},
+    fcc::FccRecord,
+};
 use fuzzywuzzy::fuzz;
 
 fn digits(text: String) -> String {
@@ -54,4 +59,81 @@ pub fn link(
             linked
         })
         .collect()
+}
+
+#[derive(PartialEq, Eq, Hash, Debug)]
+pub struct SummationKey {
+    pub tract_id: String,
+    pub product_type: ProductType,
+}
+
+#[derive(Debug)]
+pub struct Summation {
+    pub total: u16,
+    pub residential: u16,
+}
+
+fn is_consumer(text: String) -> bool {
+    text.to_uppercase() == "RESIDENTIAL"
+        || text.to_uppercase() == "RESIDENTAIL"
+        || text.to_uppercase() == "RRESIDENTIAL"
+}
+
+// I'm using and mutating the weird "111,222,333,444,555" string from
+// the FCC report to classify the tracts. I don't know why they don't
+// just include an eleven character version since that's what they want
+// to see in the submissions
+fn get_tract(text: String) -> String {
+    let mut pruned = text.replace(['\"', ','], "");
+    pruned.truncate(11);
+
+    pruned
+}
+
+pub fn summarize(
+    linked_records: Vec<(FccRecord, SubscriptionApiItem)>,
+) -> HashMap<SummationKey, Summation> {
+    let mut summarization: HashMap<SummationKey, Summation> = HashMap::new();
+
+    for (fcc, emerald) in linked_records {
+        if let Some(plan_id) = emerald.subscription.plan_id {
+            if let (Some(product_type), Some(cf_residentialbusiness)) = (
+                (*PRODUCT_CODES).get(&plan_id),
+                emerald.customer.cf_residentialbusiness,
+            ) {
+                let key = SummationKey {
+                    tract_id: get_tract(fcc.block_geoid),
+                    product_type: product_type.clone(),
+                };
+
+                if !summarization.contains_key(&key) {
+                    summarization.insert(
+                        key,
+                        Summation {
+                            total: 1,
+                            residential: if is_consumer(cf_residentialbusiness) {
+                                1
+                            } else {
+                                0
+                            },
+                        },
+                    );
+                } else if let Some(existing) = summarization.get(&key) {
+                    summarization.insert(
+                        key,
+                        Summation {
+                            total: existing.total + 1,
+                            residential: if is_consumer(cf_residentialbusiness) {
+                                existing.residential + 1
+                            } else {
+                                existing.residential
+                            },
+                        },
+                    );
+                }
+            }
+        }
+    }
+
+    summarization
 }

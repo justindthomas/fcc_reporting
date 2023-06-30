@@ -10,6 +10,7 @@ use std::env;
 pub mod analysis;
 pub mod emerald;
 pub mod fcc;
+pub mod reports;
 pub mod routes;
 
 lazy_static! {
