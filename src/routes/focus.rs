@@ -11,7 +11,7 @@ use crate::emerald::retrieve_subscriptions;
 
 #[derive(FromForm)]
 pub struct Upload<'r> {
-    save: bool,
+    _save: bool,
     file: TempFile<'r>,
 }
 

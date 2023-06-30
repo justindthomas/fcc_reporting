@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate rocket;
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 use fcc_reporting::routes::focus::upload_focus_data;
 use rocket::fs::{NamedFile, relative};
