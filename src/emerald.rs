@@ -4,8 +4,38 @@ use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, thread};
 
 #[derive(PartialEq, Eq, Hash, Clone, Debug)]
+pub struct ServiceProfile {
+    pub technology_code: u8,
+    pub committed_bandwidth_up: u16,
+    pub committed_bandwidth_down: u16,
+    pub available_bandwidth_up: u16,
+    pub available_bandwidth_down: u16,
+}
+
+pub type ProfileTuple = (u8, u16, u16, u16, u16);
+
+impl From<ProfileTuple> for ServiceProfile {
+    fn from(
+        (
+            technology_code,
+            committed_bandwidth_up,
+            committed_bandwidth_down,
+            available_bandwidth_up,
+            available_bandwidth_down,
+        ): ProfileTuple,
+    ) -> Self {
+        ServiceProfile {
+            technology_code,
+            committed_bandwidth_up,
+            committed_bandwidth_down,
+            available_bandwidth_up,
+            available_bandwidth_down,
+        }
+    }
+}
+#[derive(PartialEq, Eq, Hash, Clone, Debug)]
 pub enum ProductType {
-    Internet((u8, u16, u16)),
+    Internet(ServiceProfile),
     Voip,
     Fax,
     Admin,
@@ -14,28 +44,65 @@ pub enum ProductType {
 lazy_static! {
     pub static ref PRODUCT_CODES: HashMap<String, ProductType> = HashMap::from([
         (
-            "fttp1000".to_string(),
-            ProductType::Internet((50, 1000, 1000))
+            "2g-commercial-fiber".to_string(),
+            ProductType::Internet((50, 2000, 2000, 10000, 10000).into())
         ),
-        ("fttp800".to_string(), ProductType::Internet((50, 800, 800))),
-        ("fttp400".to_string(), ProductType::Internet((50, 400, 400))),
-        ("fttp250".to_string(), ProductType::Internet((50, 250, 250))),
-        ("fttp100".to_string(), ProductType::Internet((50, 100, 100))),
-        ("fttp25".to_string(), ProductType::Internet((50, 25, 25))),
-        ("fw25".to_string(), ProductType::Internet((70, 25, 25))),
-        ("fw50".to_string(), ProductType::Internet((70, 50, 50))),
-        ("fw75".to_string(), ProductType::Internet((70, 75, 75))),
-        ("fw100".to_string(), ProductType::Internet((70, 100, 100))),
-        ("ens1g".to_string(), ProductType::Internet((50, 1000, 1000))),
+        (
+            "fttp1000".to_string(),
+            ProductType::Internet((50, 1000, 1000, 1000, 1000).into())
+        ),
+        (
+            "fttp800".to_string(),
+            ProductType::Internet((50, 800, 800, 1000, 1000).into())
+        ),
+        (
+            "fttp400".to_string(),
+            ProductType::Internet((50, 400, 400, 1000, 1000).into())
+        ),
+        (
+            "fttp250".to_string(),
+            ProductType::Internet((50, 250, 250, 1000, 1000).into())
+        ),
+        (
+            "fttp100".to_string(),
+            ProductType::Internet((50, 100, 100, 1000, 1000).into())
+        ),
+        (
+            "fttp25".to_string(),
+            ProductType::Internet((50, 25, 25, 1000, 1000).into())
+        ),
+        (
+            "fw25".to_string(),
+            ProductType::Internet((70, 25, 25, 100, 100).into())
+        ),
+        (
+            "fw50".to_string(),
+            ProductType::Internet((70, 50, 50, 100, 100).into())
+        ),
+        (
+            "fw75".to_string(),
+            ProductType::Internet((70, 75, 75, 100, 100).into())
+        ),
+        (
+            "fw100".to_string(),
+            ProductType::Internet((70, 100, 100, 100, 100).into())
+        ),
+        (
+            "ens1g".to_string(),
+            ProductType::Internet((50, 1000, 1000, 1000, 1000).into())
+        ),
         (
             "enscustom".to_string(),
-            ProductType::Internet((50, 1000, 1000))
+            ProductType::Internet((50, 1000, 1000, 1000, 1000).into())
         ),
         (
             "ens100mbps".to_string(),
-            ProductType::Internet((50, 100, 100))
+            ProductType::Internet((50, 100, 100, 100, 100).into())
         ),
-        ("gf100".to_string(), ProductType::Internet((10, 100, 100))),
+        (
+            "gf100".to_string(),
+            ProductType::Internet((10, 100, 100, 100, 100).into())
+        ),
         ("voipfax".to_string(), ProductType::Voip),
         ("voippbxr".to_string(), ProductType::Voip),
         ("voiprpxr".to_string(), ProductType::Voip),

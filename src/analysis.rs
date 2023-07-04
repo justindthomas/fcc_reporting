@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use crate::{
     emerald::{ProductType, SubscriptionApiItem, PRODUCT_CODES},
@@ -62,7 +62,13 @@ pub fn link(
 }
 
 #[derive(PartialEq, Eq, Hash, Debug)]
-pub struct SummationKey {
+pub struct LocationSummationKey {
+    pub location_id: String,
+    pub product_type: ProductType,
+}
+
+#[derive(PartialEq, Eq, Hash, Debug)]
+pub struct TractSummationKey {
     pub tract_id: String,
     pub product_type: ProductType,
 }
@@ -90,18 +96,19 @@ fn get_tract(text: String) -> String {
     pruned
 }
 
-pub fn summarize(
+pub fn summarize_tracts(
     linked_records: Vec<(FccRecord, SubscriptionApiItem)>,
-) -> HashMap<SummationKey, Summation> {
-    let mut summarization: HashMap<SummationKey, Summation> = HashMap::new();
+) -> HashMap<TractSummationKey, Summation> {
+    let mut summarization: HashMap<TractSummationKey, Summation> = HashMap::new();
 
     for (fcc, emerald) in linked_records {
         if let Some(plan_id) = emerald.subscription.plan_id {
+            let plan_id = plan_id.replace("eugspfld", "").replace("-12", "");
             if let (Some(product_type), Some(cf_residentialbusiness)) = (
                 (*PRODUCT_CODES).get(&plan_id),
                 emerald.customer.cf_residentialbusiness,
             ) {
-                let key = SummationKey {
+                let key = TractSummationKey {
                     tract_id: get_tract(fcc.block_geoid),
                     product_type: product_type.clone(),
                 };
@@ -130,6 +137,43 @@ pub fn summarize(
                             },
                         },
                     );
+                }
+            }
+        }
+    }
+
+    summarization
+}
+
+pub fn summarize_locations(
+    linked_records: Vec<(FccRecord, SubscriptionApiItem)>,
+) -> HashSet<LocationSummationKey> {
+    let mut summarization: HashSet<LocationSummationKey> = HashSet::new();
+
+    for (fcc, emerald) in linked_records {
+        if let Some(plan_id) = emerald.subscription.plan_id {
+            let plan_id = plan_id.replace("eugspfld", "").replace("-12", "");
+            if let (Some(ProductType::Internet(service_profile)), Some(cf_residentialbusiness)) = (
+                (*PRODUCT_CODES).get(&plan_id),
+                emerald.customer.cf_residentialbusiness,
+            ) {
+                let key = LocationSummationKey {
+                    location_id: fcc.location_id,
+                    product_type: ProductType::Internet(service_profile.clone()),
+                };
+
+                if !summarization.contains(&key) {
+                    summarization.insert(key);
+                } else if let Some(existing) = summarization.get(&key) {
+                    if let ProductType::Internet(existing_service_profile) =
+                        existing.product_type.clone()
+                    {
+                        if existing_service_profile.available_bandwidth_down
+                            < service_profile.available_bandwidth_down
+                        {
+                            summarization.insert(key);
+                        }
+                    }
                 }
             }
         }
