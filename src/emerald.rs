@@ -3,43 +3,120 @@ use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, thread};
 
+#[derive(PartialEq, Eq, Hash, Clone, Debug)]
+pub struct ServiceProfile {
+    pub technology_code: u8,
+    pub committed_bandwidth_up: u16,
+    pub committed_bandwidth_down: u16,
+    pub available_bandwidth_up: u16,
+    pub available_bandwidth_down: u16,
+}
+
+pub type ProfileTuple = (u8, u16, u16, u16, u16);
+
+impl From<ProfileTuple> for ServiceProfile {
+    fn from(
+        (
+            technology_code,
+            committed_bandwidth_up,
+            committed_bandwidth_down,
+            available_bandwidth_up,
+            available_bandwidth_down,
+        ): ProfileTuple,
+    ) -> Self {
+        ServiceProfile {
+            technology_code,
+            committed_bandwidth_up,
+            committed_bandwidth_down,
+            available_bandwidth_up,
+            available_bandwidth_down,
+        }
+    }
+}
+#[derive(PartialEq, Eq, Hash, Clone, Debug)]
 pub enum ProductType {
-    Internet((u8, u16, u16)),
+    Internet(ServiceProfile),
     Voip,
     Fax,
     Admin,
 }
 
 lazy_static! {
-    pub static ref PRODUCT_CODES: HashMap<&'static str, ProductType> = HashMap::from([
-        ("fttp1000", ProductType::Internet((50, 1000, 1000))),
-        ("fttp800", ProductType::Internet((50, 800, 800))),
-        ("fttp400", ProductType::Internet((50, 400, 400))),
-        ("fttp250", ProductType::Internet((50, 250, 250))),
-        ("fttp100", ProductType::Internet((50, 100, 100))),
-        ("fttp25", ProductType::Internet((50, 25, 25))),
-        ("fw25", ProductType::Internet((70, 25, 25))),
-        ("fw50", ProductType::Internet((70, 50, 50))),
-        ("fw75", ProductType::Internet((70, 75, 75))),
-        ("fw100", ProductType::Internet((70, 100, 100))),
-        ("ens1g", ProductType::Internet((50, 1000, 1000))),
-        ("enscustom", ProductType::Internet((50, 1000, 1000))),
-        ("ens100mbps", ProductType::Internet((50, 100, 100))),
-        ("gf100", ProductType::Internet((10, 100, 100))),
-        ("voipfax", ProductType::Voip),
-        ("voippbxr", ProductType::Voip),
-        ("voiprpxr", ProductType::Voip),
-        ("voipbus", ProductType::Voip),
-        ("fax2email", ProductType::Fax),
-        ("installation-quote", ProductType::Admin),
-        ("paymentagreement", ProductType::Admin),
-        ("pre-reg", ProductType::Admin),
-        ("service-call-quote", ProductType::Admin),
-        ("acp", ProductType::Admin),
-        ("ipv427", ProductType::Admin),
-        ("ipv428", ProductType::Admin),
-        ("ipv429", ProductType::Admin),
-        ("ipstatic", ProductType::Admin),
+    pub static ref PRODUCT_CODES: HashMap<String, ProductType> = HashMap::from([
+        (
+            "2g-commercial-fiber".to_string(),
+            ProductType::Internet((50, 2000, 2000, 10000, 10000).into())
+        ),
+        (
+            "fttp1000".to_string(),
+            ProductType::Internet((50, 1000, 1000, 1000, 1000).into())
+        ),
+        (
+            "fttp800".to_string(),
+            ProductType::Internet((50, 800, 800, 1000, 1000).into())
+        ),
+        (
+            "fttp400".to_string(),
+            ProductType::Internet((50, 400, 400, 1000, 1000).into())
+        ),
+        (
+            "fttp250".to_string(),
+            ProductType::Internet((50, 250, 250, 1000, 1000).into())
+        ),
+        (
+            "fttp100".to_string(),
+            ProductType::Internet((50, 100, 100, 1000, 1000).into())
+        ),
+        (
+            "fttp25".to_string(),
+            ProductType::Internet((50, 25, 25, 1000, 1000).into())
+        ),
+        (
+            "fw25".to_string(),
+            ProductType::Internet((70, 25, 25, 100, 100).into())
+        ),
+        (
+            "fw50".to_string(),
+            ProductType::Internet((70, 50, 50, 100, 100).into())
+        ),
+        (
+            "fw75".to_string(),
+            ProductType::Internet((70, 75, 75, 100, 100).into())
+        ),
+        (
+            "fw100".to_string(),
+            ProductType::Internet((70, 100, 100, 100, 100).into())
+        ),
+        (
+            "ens1g".to_string(),
+            ProductType::Internet((50, 1000, 1000, 1000, 1000).into())
+        ),
+        (
+            "enscustom".to_string(),
+            ProductType::Internet((50, 1000, 1000, 1000, 1000).into())
+        ),
+        (
+            "ens100mbps".to_string(),
+            ProductType::Internet((50, 100, 100, 100, 100).into())
+        ),
+        (
+            "gf100".to_string(),
+            ProductType::Internet((10, 100, 100, 100, 100).into())
+        ),
+        ("voipfax".to_string(), ProductType::Voip),
+        ("voippbxr".to_string(), ProductType::Voip),
+        ("voiprpxr".to_string(), ProductType::Voip),
+        ("voipbus".to_string(), ProductType::Voip),
+        ("fax2email".to_string(), ProductType::Fax),
+        ("installation-quote".to_string(), ProductType::Admin),
+        ("paymentagreement".to_string(), ProductType::Admin),
+        ("pre-reg".to_string(), ProductType::Admin),
+        ("service-call-quote".to_string(), ProductType::Admin),
+        ("acp".to_string(), ProductType::Admin),
+        ("ipv427".to_string(), ProductType::Admin),
+        ("ipv428".to_string(), ProductType::Admin),
+        ("ipv429".to_string(), ProductType::Admin),
+        ("ipstatic".to_string(), ProductType::Admin),
     ]);
 }
 
@@ -144,7 +221,7 @@ pub struct Customer {
     primary_payment_source_id: Option<String>,
     payment_method: Option<PaymentMethod>,
     tax_providers_fields: Option<Vec<String>>,
-    cf_residentialbusiness: Option<String>,
+    pub cf_residentialbusiness: Option<String>,
     pub cf_service_address: Option<String>,
     pub cf_service_city_st_zip: Option<String>,
     pub cf_census_block_no: Option<String>,
@@ -178,7 +255,7 @@ pub struct Card {
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Subscription {
     id: Option<String>,
-    plan_id: Option<String>,
+    pub plan_id: Option<String>,
     plan_quantity: Option<u8>,
     plan_unit_price: Option<u32>,
     billing_period: Option<u8>,
@@ -213,7 +290,7 @@ pub struct Subscription {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct SubscriptionApiItem {
-    subscription: Subscription,
+    pub subscription: Subscription,
     pub customer: Customer,
     card: Option<Card>,
 }

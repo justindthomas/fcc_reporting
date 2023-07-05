@@ -1,10 +1,10 @@
 #[macro_use]
 extern crate rocket;
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 use fcc_reporting::routes::focus::upload_focus_data;
-use rocket::fs::{NamedFile, relative};
+use rocket::fs::{NamedFile, relative, FileServer};
 
 #[get("/")]
 async fn index() -> Option<NamedFile> {
@@ -17,5 +17,7 @@ async fn index() -> Option<NamedFile> {
 fn rocket() -> _ {
     env_logger::init();
 
-    rocket::build().mount("/", routes![index, upload_focus_data])
+    rocket::build()
+        .mount("/reports", FileServer::from(relative!("output/reports")))
+        .mount("/", routes![index, upload_focus_data])
 }
