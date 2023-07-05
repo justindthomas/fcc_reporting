@@ -31,13 +31,20 @@ pub fn link(
                         Some((emerald_city, _emerald_other)),
                         Some((fcc_numbers, fcc_street)),
                     ) = (
+                        // isolate the initial emerald address numbers
                         emerald_address.clone().split_once(' '),
+                        // isolate the city from the emerald complex string
                         emerald_city_state_zip.split_once(','),
+                        // isolate the initial fcc address numbers
                         fcc_address.clone().split_once(' '),
                     ) {
+                        // check if the city fields match
                         if emerald_city.to_uppercase() == fcc_city.to_uppercase()
+                            // extract all the digits and compare (to minimize false positives in the fuzzy matching)
                             && digits(emerald_address.clone()) == digits(fcc_address.clone())
+                            // check if the address numbers match exactly
                             && emerald_numbers == fcc_numbers
+                            // check if the street names match roughly
                             && fuzz::ratio(
                                 &emerald_street.to_uppercase(),
                                 &fcc_street.to_uppercase(),
