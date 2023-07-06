@@ -3,7 +3,7 @@ extern crate rocket;
 
 use std::path::Path;
 
-use fcc_reporting::routes::focus::upload_focus_data;
+use fcc_reporting::routes::{focus::upload_focus_data, reports::report_list};
 use rocket::fs::{NamedFile, relative, FileServer};
 
 #[get("/")]
@@ -18,6 +18,11 @@ fn rocket() -> _ {
     env_logger::init();
 
     rocket::build()
-        .mount("/reports", FileServer::from(relative!("output/reports")))
-        .mount("/", routes![index, upload_focus_data])
+        .mount("/static", FileServer::from(relative!("static")))
+        .mount("/report", FileServer::from(relative!("output/reports")))
+        .mount("/", routes![
+            index,
+            upload_focus_data,
+            report_list
+        ])
 }

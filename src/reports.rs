@@ -9,10 +9,9 @@ use crate::{
 };
 
 pub fn broadband_subscription_report(summarization: &HashMap<TractSummationKey, Summation>) {
-    let uuid = uuid::Uuid::new_v4().to_string();
-
+    let now = chrono::Utc::now().timestamp();
     let mut wtr = csv::WriterBuilder::new()
-        .from_path(format!("output/reports/broadband_subscription-{uuid}.csv"))
+        .from_path(format!("output/reports/broadband_subscription-{now}.csv"))
         .unwrap();
 
     wtr.write_record([
@@ -43,10 +42,9 @@ pub fn broadband_subscription_report(summarization: &HashMap<TractSummationKey, 
 }
 
 pub fn voice_subscription_report(summarization: &HashMap<TractSummationKey, Summation>) {
-    let uuid = uuid::Uuid::new_v4().to_string();
-
+    let now = chrono::Utc::now().timestamp();
     let mut wtr = csv::WriterBuilder::new()
-        .from_path(format!("output/reports/voice_subscription-{uuid}.csv"))
+        .from_path(format!("output/reports/voice_subscription-{now}.csv"))
         .unwrap();
 
     wtr.write_record([
@@ -73,10 +71,9 @@ pub fn voice_subscription_report(summarization: &HashMap<TractSummationKey, Summ
 }
 
 pub fn broadband_availability_report(summarization: &HashSet<LocationSummationKey>) {
-    let uuid = uuid::Uuid::new_v4().to_string();
-
+    let now = chrono::Utc::now().timestamp();
     let mut wtr = csv::WriterBuilder::new()
-        .from_path(format!("output/reports/broadband_availability-{uuid}.csv"))
+        .from_path(format!("output/reports/broadband_availability-{now}.csv"))
         .unwrap();
 
     wtr.write_record([
