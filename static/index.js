@@ -8,12 +8,11 @@ httpRequest.onreadystatechange = (event) => {
         reports.innerText = "";
 
         response.forEach(report => {
-            let pruned = report.replace('.csv','');
-            let parts = pruned.split('-');
-            let date = new Date(parts[1] * 1000);
-            let entry = document.createElement('li');
-            let anchor = document.createElement('a');
-            anchor.appendChild(document.createTextNode(`${parts[0]} ${date.toISOString()}`));
+            const [name, ts] = report.replace('.csv','').split('-');
+            const date = new Date(ts * 1000);
+            const entry = document.createElement('li');
+            const anchor = document.createElement('a');
+            anchor.appendChild(document.createTextNode(`${name} ${date.toISOString()}`));
             anchor.setAttribute("href",`report/${report}`);
             entry.appendChild(anchor);
             reports.appendChild(entry);
