@@ -29,6 +29,7 @@ COPY rust-toolchain.toml /opt/build
 RUN source /root/.cargo/env && cargo build --bin server --release
 
 FROM ubuntu:22.04
+
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
   ssl-cert \
   ca-certificates \
@@ -37,6 +38,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
 
 RUN mkdir -p /srv/fcc/static
 RUN mkdir -p /srv/fcc/output/reports
+RUN mkdir -p /srv/fcc/output/tmp
 WORKDIR /srv/fcc
 COPY static/index.* static/
 COPY --from=builder /opt/build/target/release/server ./
