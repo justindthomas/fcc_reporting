@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd /srv/fcc
+
+RUST_LOG=debug ./server
+

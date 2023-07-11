@@ -8,6 +8,15 @@ When the FCC data is submitted to the application, the Emerald customer data is 
 
 This is a Rust application and can be built and run from any system with a working Rust toolchain.
 
+### Running on Docker
+
+```
+docker build .
+docker run -it -p 8000:8000 [HASH OUTPUT FROM BUILD]
+```
+
+### Running Bare Metal
+
 ```
 RUST_LOG=debug cargo run --bin server
 ```

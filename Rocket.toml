@@ -1,3 +1,6 @@
+[global]
+address = "0.0.0.0"
+
 [global.limits]
 data-form = 52428800
 file = 52428800
