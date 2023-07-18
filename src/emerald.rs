@@ -35,10 +35,11 @@ impl From<ProfileTuple> for ServiceProfile {
 }
 
 impl ServiceProfile {
-    pub fn equalize_committed(&mut self) -> Self {
-        self.committed_bandwidth_up = self.available_bandwidth_up;
-        self.committed_bandwidth_down = self.available_bandwidth_down;
-        self.clone()
+    pub fn equalize_committed(&self) -> Self {
+        let mut ret = self.clone();
+        ret.committed_bandwidth_up = self.available_bandwidth_up;
+        ret.committed_bandwidth_down = self.available_bandwidth_down;
+        ret
     }
 }
 

@@ -1,7 +1,4 @@
-use std::{
-    collections::{HashMap, HashSet},
-    io,
-};
+use std::collections::{HashMap, HashSet};
 
 use crate::{
     analysis::{LocationSummationKey, Summation, TractSummationKey},

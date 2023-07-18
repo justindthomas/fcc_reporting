@@ -160,15 +160,10 @@ pub fn summarize_locations(
     for (fcc, emerald) in linked_records {
         if let Some(plan_id) = emerald.subscription.plan_id {
             let plan_id = plan_id.replace("eugspfld", "").replace("-12", "");
-            if let (Some(ProductType::Internet(service_profile)), Some(_cf_residentialbusiness)) = (
-                (*PRODUCT_CODES).get(&plan_id),
-                emerald.customer.cf_residentialbusiness,
-            ) {
+            if let Some(ProductType::Internet(service_profile)) = (*PRODUCT_CODES).get(&plan_id) {
                 let key = LocationSummationKey {
                     location_id: fcc.location_id,
-                    product_type: ProductType::Internet(
-                        service_profile.clone().equalize_committed(),
-                    ),
+                    product_type: ProductType::Internet(service_profile.equalize_committed()),
                 };
 
                 if !summarization.contains(&key) {
