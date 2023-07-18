@@ -9,17 +9,27 @@ const retrieve = async (event) => {
     const reports = await response.json();
 
     const reportsEl = document.getElementById("reports");
-    reportsEl.innerText = "";
+    const tbody = reportsEl.getElementsByTagName("tbody")[0];
+    tbody.innerText = "";
 
     reports.forEach(report => {
         const [name, ts] = report.replace('.csv','').split('-');
         const date = new Date(ts * 1000);
-        const entry = document.createElement('li');
+        const entry = document.createElement('tr');
+        
+        const nameCell = document.createElement('td');
         const anchor = document.createElement('a');
-        anchor.appendChild(document.createTextNode(`${name} ${date.toISOString()}`));
+        anchor.appendChild(document.createTextNode(`${name}`));
         anchor.setAttribute("href",`report/${report}`);
-        entry.appendChild(anchor);
-        reportsEl.appendChild(entry);
+        nameCell.appendChild(anchor);
+        
+        const timeCell = document.createElement('td');
+        timeCell.appendChild(document.createTextNode(`${date.toISOString()}`));
+        
+        entry.appendChild(nameCell);
+        entry.appendChild(timeCell);
+        
+        tbody.appendChild(entry);
     });
 };
 
@@ -46,3 +56,14 @@ const dragLeaveHandler = (event) => {
     event.preventDefault();
     event.target.classList.remove("dragged");
 }
+
+document.addEventListener('submit', (event) => {
+    const form = event.target;
+
+    fetch(form.action, {
+        method: form.method,
+        body: new FormData(form),
+    });
+
+    e.preventDefault();
+});

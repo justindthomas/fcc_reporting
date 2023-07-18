@@ -5,13 +5,13 @@ body {
     flex-direction: row;
     justify-content: center;
     font-family: sans-serif;
+    margin: 0;
 }
 
 body > .app {
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-width: 500px;
 }
 
 @media (max-width: 600px) {
@@ -23,33 +23,41 @@ body > .app {
 
 #drop_zone {
     background: #111;
-    padding: 30px 50px;
+    padding: 0;
     margin: 5px 0;
     color: #fff;
     text-align: center;
-    width: calc(100% - 100px);
-    border-radius: 20px;
+    width: 100%;
+    border-radius: 10px;
     border: 1px solid #333;
 }
 
 @media (max-width: 600px) {
     #drop_zone {
-        display: none;
+        border-radius: 0;
+        margin: 0;
+        border: 0;
     }
+    
+    #drop_zone > p {
+        display: none;
+    }      
 }
 
 #drop_zone > p {
+    width: calc(100% - 100px);
     pointer-events: none;
     text-transform: uppercase;
-    text-align: left;
+    text-align: center;
+    padding: 50px;
+    margin: 0;
 }
 
-.dragged {
+div.dragged {
     outline: 1px dashed #ccc;
 }
 
 input {
-    background: #222;
     padding: 10px 30px;
     color: #fff;
     text-align: center;
@@ -59,6 +67,18 @@ input {
 form {
     width: 100%;
     text-align: center;
+    pointer-events: none;
+}
+
+form {
+    margin: 0;
+    border-radius: 0 0 10px 10px;
+}
+
+@media (max-width: 600px) {
+    form, input {
+        border-radius: 0;
+    }      
 }
 
 button, input::file-selector-button {
@@ -68,6 +88,14 @@ button, input::file-selector-button {
     outline: 0;
     padding: 10px;
     margin: 10px;
+    pointer-events: auto;
+}
+
+button {
+    width: 100%;
+    padding: 10px 0;
+    margin: 0;
+    border-radius: 0 0 10px 10px;
 }
 
 button:hover, input::file-selector-button:hover {
@@ -75,25 +103,51 @@ button:hover, input::file-selector-button:hover {
     cursor: pointer;
 }
 
-ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    text-align: left;
-    width: 100%;
+table {
+    background: #222;
+    color: #fff;
+    border: 1px solid #555;
+    min-width: 600px;
+    border-spacing: 0;
+    border-collapse: separate;
+    margin: 20px 0;
+    border-radius: 10px;
 }
 
-li {
+thead {
+    background: #333;
+}
+
+th {
+    text-align: left;
+    padding: 5px;
+}
+
+th:first-child {
+    border-radius: 10px 0 0 0;
+}
+
+th:last-child {
+    border-radius: 0 10px 0 0;
+}
+
+td {
     padding: 5px;
     margin: 3px 0;
+    color: #fff;
+    border-radius: 10px;
 }
 
-li > a {
+td > a {
     color: #fff;
     text-decoration: none;
 }
 
-li > a:hover {
+tr:hover td, tr:hover td a {
+    color: #aaa;
+}
+
+tr > td > a:hover {
     color: red;
     cursor: pointer;
 }

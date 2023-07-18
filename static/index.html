@@ -12,16 +12,24 @@
                 ondragover="dragOverHandler(event);"
                 ondragleave="dragLeaveHandler(event);"
                 ondragend="dragLeavehandler(event);">
-                <p>Drag and drop the FCC fabric file here or use the "Choose File" button below to select it</p>
-            </div>
-            
-            <form method="post" enctype="multipart/form-data" action="/focus">
-                <input type="file" id="file" name="file" />
-                    <button>Submit</button>
-            </form>
+                <p>Drop FCC fabric file here</p>
 
-            <ul id="reports">
-            </ul>
+                <form method="post" enctype="multipart/form-data" action="/focus">
+                    <input type="file" id="file" name="file" accept=".csv" required />
+                    <button>Upload</button>
+                </form>
+            </div>
+
+            <table id="reports">
+                <thead>
+                    <tr>
+                        <th>Report Type</th>
+                        <th>Creation Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
         </div>
     </body>
 </html>
