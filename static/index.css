@@ -13,7 +13,14 @@ body > .app {
     align-items: center;
     max-width: 500px;
 }
-    
+
+@media (max-width: 600px) {
+    body > .app {
+        max-width: unset;
+        width: 100%;
+    }
+}
+
 #drop_zone {
     background: #111;
     padding: 30px 50px;
@@ -21,6 +28,14 @@ body > .app {
     color: #fff;
     text-align: center;
     width: calc(100% - 100px);
+    border-radius: 20px;
+    border: 1px solid #333;
+}
+
+@media (max-width: 600px) {
+    #drop_zone {
+        display: none;
+    }
 }
 
 #drop_zone > p {
