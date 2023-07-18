@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: fcc-reporting
+  name: fcc-reporting
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      run: fcc-reporting
+  template:
+    metadata:
+      labels:
+        run: fcc-reporting
+    spec:
+      containers:
+      - image: localhost:32000/fcc-reporting:latest
+        imagePullPolicy: Always
+        name: fcc-reporting
+        env:
+        - name:  API_URL
+          valueFrom:
+            secretKeyRef:
+              name: chargebee
+              key: API_URL
+        - name:  API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: chargebee
+              key: API_KEY

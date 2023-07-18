@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fcc-reporting-loadbalancer
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8000
+  selector:
+    run: fcc-reporting
+  type: LoadBalancer
+  externalTrafficPolicy: Local

@@ -1,19 +1,26 @@
 <html>
     <head>
         <script src="static/index.js" defer></script>
+        <link rel="stylesheet" href="static/index.css">
     </head>
     <body>
-        <form method="post" enctype="multipart/form-data" action="/focus">
-            <div>
-                <label for="file">Choose file to upload</label>
+        <div class="app">
+            <div
+                id="drop_zone"
+                ondrop="dropHandler(event);"
+                ondragover="dragOverHandler(event);"
+                ondragleave="dragLeaveHandler(event);"
+                ondragend="dragLeavehandler(event);">
+                <p>Drag and drop the FCC fabric file here or use the "Choose File" button below to select it</p>
+            </div>
+            
+            <form method="post" enctype="multipart/form-data" action="/focus">
                 <input type="file" id="file" name="file" />
-            </div>
-            <div>
-                <button>Submit</button>
-            </div>
-        </form>
+                    <button>Submit</button>
+            </form>
 
-        <ul id="reports">
-        </ul>
+            <ul id="reports">
+            </ul>
+        </div>
     </body>
 </html>

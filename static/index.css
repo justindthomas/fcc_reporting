@@ -1,0 +1,84 @@
+body {
+    background: #000;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    font-family: sans-serif;
+}
+
+body > .app {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 500px;
+}
+    
+#drop_zone {
+    background: #111;
+    padding: 30px 50px;
+    margin: 5px 0;
+    color: #fff;
+    text-align: center;
+    width: calc(100% - 100px);
+}
+
+#drop_zone > p {
+    pointer-events: none;
+    text-transform: uppercase;
+    text-align: left;
+}
+
+.dragged {
+    outline: 1px dashed #ccc;
+}
+
+input {
+    background: #222;
+    padding: 10px 30px;
+    color: #fff;
+    text-align: center;
+    width: 100%;
+}
+
+form {
+    width: 100%;
+    text-align: center;
+}
+
+button, input::file-selector-button {
+    background: #555;
+    color: #fff;
+    border: 0;
+    outline: 0;
+    padding: 10px;
+    margin: 10px;
+}
+
+button:hover, input::file-selector-button:hover {
+    background: darkred;
+    cursor: pointer;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+    width: 100%;
+}
+
+li {
+    padding: 5px;
+    margin: 3px 0;
+}
+
+li > a {
+    color: #fff;
+    text-decoration: none;
+}
+
+li > a:hover {
+    color: red;
+    cursor: pointer;
+}
