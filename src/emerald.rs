@@ -33,6 +33,15 @@ impl From<ProfileTuple> for ServiceProfile {
         }
     }
 }
+
+impl ServiceProfile {
+    pub fn equalize_committed(&mut self) -> Self {
+        self.committed_bandwidth_up = self.available_bandwidth_up;
+        self.committed_bandwidth_down = self.available_bandwidth_down;
+        self.clone()
+    }
+}
+
 #[derive(PartialEq, Eq, Hash, Clone, Debug)]
 pub enum ProductType {
     Internet(ServiceProfile),
