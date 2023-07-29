@@ -1,9 +1,8 @@
-#[macro_use]
-extern crate rocket;
+#[macro_use] extern crate rocket;
 
 use std::path::Path;
 
-use fcc_reporting::routes::{focus::upload_focus_data, reports::report_list};
+use fcc_reporting::routes::{focus::upload_focus_data, reports::{report_list, statistics_list}};
 use rocket::fs::{NamedFile, FileServer};
 
 #[get("/")]
@@ -23,6 +22,7 @@ fn rocket() -> _ {
         .mount("/", routes![
             index,
             upload_focus_data,
-            report_list
+            report_list,
+            statistics_list
         ])
 }

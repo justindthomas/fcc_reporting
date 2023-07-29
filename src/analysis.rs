@@ -74,13 +74,13 @@ pub struct LocationSummationKey {
     pub product_type: ProductType,
 }
 
-#[derive(PartialEq, Eq, Hash, Debug)]
+#[derive(PartialEq, Eq, Hash, Debug, Clone)]
 pub struct TractSummationKey {
     pub tract_id: String,
     pub product_type: ProductType,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Summation {
     pub total: u16,
     pub residential: u16,

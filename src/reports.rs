@@ -3,12 +3,20 @@ use std::collections::{HashMap, HashSet};
 use crate::{
     analysis::{LocationSummationKey, Summation, TractSummationKey},
     emerald::ProductType,
+    routes::focus::{BroadbandStatistic, VoipStatistic},
 };
 
-pub fn broadband_subscription_report(summarization: &HashMap<TractSummationKey, Summation>) {
+pub fn broadband_subscription_report(
+    uuid: &str,
+    summarization: &HashMap<TractSummationKey, Summation>,
+) -> BroadbandStatistic {
+    let mut statistic = BroadbandStatistic::default();
+
     let now = chrono::Utc::now().timestamp();
     let mut wtr = csv::WriterBuilder::new()
-        .from_path(format!("output/reports/broadband_subscription-{now}.csv"))
+        .from_path(format!(
+            "output/reports/broadband_subscription-{now}-{uuid}.csv"
+        ))
         .unwrap();
 
     wtr.write_record([
@@ -22,6 +30,7 @@ pub fn broadband_subscription_report(summarization: &HashMap<TractSummationKey, 
     .ok();
 
     for (key, summation) in summarization {
+        statistic = statistic + ((*key).clone(), (*summation).clone()).into();
         if let ProductType::Internet(service_profile) = key.product_type.clone() {
             wtr.write_record(&[
                 key.tract_id.clone(),
@@ -36,12 +45,20 @@ pub fn broadband_subscription_report(summarization: &HashMap<TractSummationKey, 
     }
 
     wtr.flush().ok();
+
+    statistic
 }
 
-pub fn voice_subscription_report(summarization: &HashMap<TractSummationKey, Summation>) {
+pub fn voice_subscription_report(
+    uuid: &String,
+    summarization: &HashMap<TractSummationKey, Summation>,
+) -> VoipStatistic {
+    let mut statistic = VoipStatistic::default();
     let now = chrono::Utc::now().timestamp();
     let mut wtr = csv::WriterBuilder::new()
-        .from_path(format!("output/reports/voice_subscription-{now}.csv"))
+        .from_path(format!(
+            "output/reports/voice_subscription-{now}-{uuid}.csv"
+        ))
         .unwrap();
 
     wtr.write_record([
@@ -53,6 +70,7 @@ pub fn voice_subscription_report(summarization: &HashMap<TractSummationKey, Summ
     .ok();
 
     for (key, summation) in summarization {
+        statistic = statistic + ((*key).clone(), (*summation).clone()).into();
         if let ProductType::Voip = key.product_type {
             wtr.write_record(&[
                 key.tract_id.clone(),
@@ -65,12 +83,16 @@ pub fn voice_subscription_report(summarization: &HashMap<TractSummationKey, Summ
     }
 
     wtr.flush().ok();
+
+    statistic
 }
 
-pub fn broadband_availability_report(summarization: &HashSet<LocationSummationKey>) {
+pub fn broadband_availability_report(uuid: &String, summarization: &HashSet<LocationSummationKey>) {
     let now = chrono::Utc::now().timestamp();
     let mut wtr = csv::WriterBuilder::new()
-        .from_path(format!("output/reports/broadband_availability-{now}.csv"))
+        .from_path(format!(
+            "output/reports/broadband_availability-{now}-{uuid}.csv"
+        ))
         .unwrap();
 
     wtr.write_record([
